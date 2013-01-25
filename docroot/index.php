@@ -13,7 +13,7 @@ $host_meta = parse_url($url);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_HEADER, FALSE);
-curl_setopt($ch,CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
 
 // curl_setopt($ch, CURLOPT_NOBODY, TRUE);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -37,28 +37,29 @@ if (eregi("image/[gif|png|jpg|jpeg]", $content_type)) {
 
 	imageflip($image, 0, 0, $x, $y);
 
-	// header("Content-type: $content_type");
 	header("Content-type: image/jpeg");
 	imagejpeg($image, null, 1);
 
 	/*
-	switch($content_type) {
+	 header("Content-type: $content_type");
 
-		default :
-		case "image/jpg" :
-		case "image/jpeg" :
-			imagejpeg($image);
-			break;
+	 switch($content_type) {
 
-		case "image/png" :
-			imagepng($image);
-			break;
+	 default :
+	 case "image/jpg" :
+	 case "image/jpeg" :
+	 imagejpeg($image);
+	 break;
 
-		case "image/gif" :
-			imagegif($image);
-			break;
-	}
-	*/
+	 case "image/png" :
+	 imagepng($image);
+	 break;
+
+	 case "image/gif" :
+	 imagegif($image);
+	 break;
+	 }
+	 */
 
 } else if (eregi("[text|application]/[html|xhtml|xml](.*)", $content_type)) {
 
@@ -74,67 +75,67 @@ if (eregi("image/[gif|png|jpg|jpeg]", $content_type)) {
 	// fix images
 	$img = $xpath -> query("//img");
 	foreach ($img as $i) {
-		$src = $i->getAttribute("src");
-		if (substr($src,0,4) !== "http") {
-			if (substr($src,0,1) !== "/")
+		$src = $i -> getAttribute("src");
+		if (substr($src, 0, 4) !== "http") {
+			if (substr($src, 0, 1) !== "/")
 				$src = "/" . $src;
 			$src = "{$host_meta['scheme']}://{$host_meta['host']}{$src}";
 		}
 		$src = "http://{$_SERVER['HTTP_HOST']}/?u=" . urlencode($src);
-		$i->setAttribute("src",$src);			
+		$i -> setAttribute("src", $src);
 	}
 
 	// fix links
 	$anchors = $xpath -> query("//a");
 	foreach ($anchors as $a) {
-		$href = $a->getAttribute("href");
-		if (substr($href,0,4) !== "http") {
-			if (substr($href,0,1) !== "/")
+		$href = $a -> getAttribute("href");
+		if (substr($href, 0, 4) !== "http") {
+			if (substr($href, 0, 1) !== "/")
 				$href = "/" . $href;
 			$href = "{$host_meta['scheme']}://{$host_meta['host']}{$href}";
 		}
 		$href = "http://{$_SERVER['HTTP_HOST']}/?u=" . urlencode($href);
-		$a->setAttribute("href",$href);			
+		$a -> setAttribute("href", $href);
 	}
 
 	// fix CSS
 	$links = $xpath -> query("//link");
 	foreach ($links as $link) {
-		$href = $link->getAttribute("href");
-		if (substr($href,0,4) !== "http") {
-			if (substr($href,0,1) !== "/")
+		$href = $link -> getAttribute("href");
+		if (substr($href, 0, 4) !== "http") {
+			if (substr($href, 0, 1) !== "/")
 				$href = "/" . $href;
 			$href = "{$host_meta['scheme']}://{$host_meta['host']}{$href}";
 		}
 		// $href = "http://{$_SERVER['HTTP_HOST']}/?u=" . urlencode($href);
-		$link->setAttribute("href",$href);			
+		$link -> setAttribute("href", $href);
 	}
 
 	// fix script
 	$scripts = $xpath -> query("//script");
 	foreach ($scripts as $script) {
-		$href = $script->getAttribute("src");
+		$href = $script -> getAttribute("src");
 
 		// might be inline JS
 		if (empty($href))
 			continue;
 
-		if (substr($href,0,4) !== "http") {
-			if (substr($href,0,1) !== "/")
+		if (substr($href, 0, 4) !== "http") {
+			if (substr($href, 0, 1) !== "/")
 				$href = "/" . $href;
 			$href = "{$host_meta['scheme']}://{$host_meta['host']}{$href}";
 		}
 		// $href = "http://{$_SERVER['HTTP_HOST']}/?u=" . urlencode($href);
-		$script->setAttribute("src",$href);
+		$script -> setAttribute("src", $href);
 	}
 
 	// flip document with CSS is another option too!
 	/*
-	$body = $xpath -> query("//body")->item(0);
-	$style = $body->getAttribute("style");
-	$style = "transform:rotateY(180deg);{$style}";
-	$body->setAttribute("style",$style);
-	*/
+	 $body = $xpath -> query("//body")->item(0);
+	 $style = $body->getAttribute("style");
+	 $style = "transform:rotateY(180deg);{$style}";
+	 $body->setAttribute("style",$style);
+	 */
 
 	// DOCTYPE ?
 	$output = $dom -> saveHTML($doc);
