@@ -28,7 +28,7 @@ if ($http_status !== 200) {
 	exit();
 }
 
-if (eregi("image/[gif|png|jpg|jpeg]", $content_type)) {
+if (preg_match("/image\/[gif|png|jpg|jpeg]/", $content_type)) {
 
 	$image = imagecreatefromstring($response_body);
 
@@ -61,7 +61,7 @@ if (eregi("image/[gif|png|jpg|jpeg]", $content_type)) {
 	 }
 	 */
 
-} else if (eregi("[text|application]/[html|xhtml|xml](.*)", $content_type)) {
+} else if (preg_match("/[text|application]\/[html|xhtml|xml](.*)/", $content_type)) {
 
 	$dom = new DOMDocument;
 	libxml_use_internal_errors(true);
